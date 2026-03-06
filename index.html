@@ -11,9 +11,12 @@
     body { font-family: Arial, sans-serif; background: #0a0c12; }
     @media print {
       body > * { display: none !important; }
-      #vt-print-preview { display: block !important; position: static !important; }
+      #vt-print-preview { display: block !important; position: static !important;
+        background: white !important; }
       #vt-print-preview .no-print { display: none !important; }
-      @page { size: A4 portrait; margin: 8mm; }
+      #vt-print-content { background: white !important; padding: 0 !important;
+        display: block !important; }
+      @page { size: A4 portrait; margin: 0; }
       * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
     }
   </style>
@@ -22,6 +25,7 @@
   <div id="root"></div>
   <script>
 const { useState, useRef, useEffect, useCallback, useMemo } = React;
+exports.default = RemitoApp;
 // ─── Datos fijos VIBE TECNO SRL ───────────────────────────────────────────────
 const EMPRESA = {
     nombre: "VIBE TECNO SRL",
@@ -761,7 +765,7 @@ function RemitoApp() {
                         pdf.save(`Remito-${String(nro).padStart(8, '0')}.pdf`);
                     }, style: Object.assign(Object.assign({}, Btn("#0f2a10", "#4caf7d")), { padding: "8px 22px", fontWeight: "bold" }) }, "\u2B07 Descargar PDF"),
                 React.createElement("button", { onClick: () => setPrintPreview(false), style: Object.assign(Object.assign({}, Btn("#2a0f0f", "#c05050")), { padding: "8px 18px" }) }, "\u2715 Cerrar")),
-            React.createElement("div", { id: "vt-print-content", style: { background: "white", padding: "8px 0" } }, printFormRef.current && (() => {
+            React.createElement("div", { id: "vt-print-content", style: { background: "#e0e0e0", padding: "16px 0", display: "flex", flexDirection: "column", alignItems: "center", gap: 16 } }, printFormRef.current && (() => {
                 const _pf = printFormRef.current;
                 const LINES_PER_PAGE = 25;
                 const lineas = _pf.lineas.filter(l => l.codigo || l.descripcion);
@@ -796,7 +800,9 @@ function RemitoCopia({ form, copia, forPrint, pageNum = 1, totalPages = 1 }) {
         "DUPLICADO": { bg: "#fffbe6", stripe: "#7a6000", label: "#7a6000" },
         "TRIPLICADO": { bg: "#f0f7ff", stripe: "#003c7a", label: "#003c7a" },
     }[copia];
-    return (React.createElement("div", { style: Object.assign({ position: "relative", overflow: "hidden", background: COPIA_COLOR.bg, color: "#111", fontFamily: "'Arial Narrow', Arial, sans-serif", fontSize: 10, padding: "14px 18px", border: "1px solid #999", boxSizing: "border-box" }, (forPrint ? { minHeight: "277mm", width: "100%" } : { marginBottom: 4 })) },
+    return (React.createElement("div", { style: Object.assign({ position: "relative", overflow: "hidden", background: COPIA_COLOR.bg, color: "#111", fontFamily: "'Arial Narrow', Arial, sans-serif", fontSize: 10, padding: "14px 18px", border: "1px solid #999", boxSizing: "border-box", 
+            // Cada copia ocupa exactamente una hoja A4
+            width: "210mm", minHeight: "297mm" }, (forPrint ? {} : { marginBottom: 8, boxShadow: "0 2px 8px rgba(0,0,0,0.15)" })) },
         React.createElement("div", { style: {
                 position: "absolute", top: "50%", left: "50%",
                 transform: "translate(-50%, -50%)",
