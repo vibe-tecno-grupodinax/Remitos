@@ -14,7 +14,8 @@
       #vt-print-preview { display: block !important; position: static !important; background: white !important; }
       #vt-print-preview .no-print { display: none !important; }
       #vt-print-content { background: white !important; padding: 0 !important; display: block !important; }
-      #vt-print-content > div { width: 210mm !important; min-height: 297mm !important; page-break-after: always; break-after: page; }
+      #vt-print-content > div { page-break-after: always; break-after: page; }
+      #vt-print-content > div:last-child { page-break-after: avoid; break-after: avoid; }
       @page { size: A4 portrait; margin: 0; }
       * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
     }
@@ -769,15 +770,20 @@ function RemitoApp() {
                 const lineas = _pf.lineas.filter(l => l.codigo || l.descripcion);
                 const totalPages = Math.max(1, Math.ceil(lineas.length / LINES_PER_PAGE));
                 const pages = Array.from({ length: totalPages }, (_, p) => lineas.slice(p * LINES_PER_PAGE, (p + 1) * LINES_PER_PAGE));
-                return ["ORIGINAL", "DUPLICADO", "TRIPLICADO"].map((copia, ci) => (React.createElement("div", { key: copia }, pages.map((pageLineas, pi) => {
-                    const isLastPage = pi === pages.length - 1;
-                    const isLastCopy = ci === 2;
-                    return (React.createElement("div", { key: pi, style: {
-                            pageBreakAfter: (!isLastPage || !isLastCopy) ? "always" : "avoid",
-                            breakAfter: (!isLastPage || !isLastCopy) ? "page" : "avoid",
-                        } },
-                        React.createElement(RemitoCopia, { form: Object.assign(Object.assign({}, _pf), { lineas: pageLineas }), copia: copia, pageNum: pi + 1, totalPages: totalPages, forPrint: true })));
-                }))));
+                const copias = ["ORIGINAL", "DUPLICADO", "TRIPLICADO"];
+                const allSheets = [];
+                copias.forEach((copia, ci) => {
+                    pages.forEach((pageLineas, pi) => {
+                        const isLast = ci === copias.length - 1 && pi === pages.length - 1;
+                        allSheets.push(React.createElement("div", { key: `${copia}-${pi}`, style: {
+                                pageBreakAfter: isLast ? "avoid" : "always",
+                                breakAfter: isLast ? "avoid" : "page",
+                                width: "210mm", minHeight: "297mm",
+                            } },
+                            React.createElement(RemitoCopia, { form: Object.assign(Object.assign({}, _pf), { lineas: pageLineas }), copia: copia, pageNum: pi + 1, totalPages: totalPages, forPrint: true })));
+                    });
+                });
+                return allSheets;
             })()))),
         confirmDlg && (React.createElement("div", { style: { position: "fixed", inset: 0, background: "rgba(0,0,0,0.7)",
                 display: "flex", alignItems: "center", justifyContent: "center", zIndex: 9999 } },
