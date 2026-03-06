@@ -11,11 +11,10 @@
     body { font-family: Arial, sans-serif; background: #0a0c12; }
     @media print {
       body > * { display: none !important; }
-      #vt-print-preview { display: block !important; position: static !important;
-        background: white !important; }
+      #vt-print-preview { display: block !important; position: static !important; background: white !important; }
       #vt-print-preview .no-print { display: none !important; }
-      #vt-print-content { background: white !important; padding: 0 !important;
-        display: block !important; }
+      #vt-print-content { background: white !important; padding: 0 !important; display: block !important; }
+      #vt-print-content > div { width: 210mm !important; min-height: 297mm !important; page-break-after: always; break-after: page; }
       @page { size: A4 portrait; margin: 0; }
       * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
     }
@@ -767,7 +766,7 @@ function RemitoApp() {
                 React.createElement("button", { onClick: () => setPrintPreview(false), style: Object.assign(Object.assign({}, Btn("#2a0f0f", "#c05050")), { padding: "8px 18px" }) }, "\u2715 Cerrar")),
             React.createElement("div", { id: "vt-print-content", style: { background: "#e0e0e0", padding: "16px 0", display: "flex", flexDirection: "column", alignItems: "center", gap: 16 } }, printFormRef.current && (() => {
                 const _pf = printFormRef.current;
-                const LINES_PER_PAGE = 25;
+                const LINES_PER_PAGE = 18;
                 const lineas = _pf.lineas.filter(l => l.codigo || l.descripcion);
                 const totalPages = Math.max(1, Math.ceil(lineas.length / LINES_PER_PAGE));
                 const pages = Array.from({ length: totalPages }, (_, p) => lineas.slice(p * LINES_PER_PAGE, (p + 1) * LINES_PER_PAGE));
@@ -800,9 +799,9 @@ function RemitoCopia({ form, copia, forPrint, pageNum = 1, totalPages = 1 }) {
         "DUPLICADO": { bg: "#fffbe6", stripe: "#7a6000", label: "#7a6000" },
         "TRIPLICADO": { bg: "#f0f7ff", stripe: "#003c7a", label: "#003c7a" },
     }[copia];
-    return (React.createElement("div", { style: Object.assign({ position: "relative", overflow: "hidden", background: COPIA_COLOR.bg, color: "#111", fontFamily: "'Arial Narrow', Arial, sans-serif", fontSize: 10, padding: "14px 18px", border: "1px solid #999", boxSizing: "border-box", 
+    return (React.createElement("div", { style: Object.assign({ position: "relative", overflow: "hidden", background: COPIA_COLOR.bg, color: "#111", fontFamily: "'Arial Narrow', Arial, sans-serif", fontSize: 11, padding: "10mm 12mm", border: "1px solid #999", boxSizing: "border-box", 
             // Cada copia ocupa exactamente una hoja A4
-            width: "210mm", minHeight: "297mm" }, (forPrint ? {} : { marginBottom: 8, boxShadow: "0 2px 8px rgba(0,0,0,0.15)" })) },
+            width: "210mm", minHeight: "297mm", fontSize: 11 }, (forPrint ? {} : { marginBottom: 8, boxShadow: "0 2px 8px rgba(0,0,0,0.15)" })) },
         React.createElement("div", { style: {
                 position: "absolute", top: "50%", left: "50%",
                 transform: "translate(-50%, -50%)",
@@ -895,7 +894,7 @@ function RemitoCopia({ form, copia, forPrint, pageNum = 1, totalPages = 1 }) {
                         React.createElement("td", { style: { padding: "3.5px 6px", borderBottom: "1px solid #e0e0e0", width: "12%" } }, l.codigo),
                         React.createElement("td", { style: { padding: "3.5px 6px", borderBottom: "1px solid #e0e0e0", width: "12%" } }, l.cantidad),
                         React.createElement("td", { style: { padding: "3.5px 6px", borderBottom: "1px solid #e0e0e0" } }, l.descripcion)))),
-                    Array.from({ length: Math.max(0, 25 - form.lineas.length) }).map((_, i) => (React.createElement("tr", { key: `e${i}` },
+                    Array.from({ length: Math.max(0, 18 - form.lineas.length) }).map((_, i) => (React.createElement("tr", { key: `e${i}` },
                         React.createElement("td", { style: { padding: "3.5px 6px", borderBottom: "1px solid #e8e8e8", height: 17 } }, "\u00A0"),
                         React.createElement("td", { style: { padding: "3.5px 6px", borderBottom: "1px solid #e8e8e8" } }),
                         React.createElement("td", { style: { padding: "3.5px 6px", borderBottom: "1px solid #e8e8e8" } })))))),
